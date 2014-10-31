@@ -1,0 +1,43 @@
+/*
+ * Copyright 2014 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.rhq.metrics.netty.collectd.events;
+
+/**
+ * @author Thomas Segismont
+ */
+public final class TimeSpan {
+    private final long value;
+    private final TimeResolution resolution;
+
+    public TimeSpan(long value, TimeResolution resolution) {
+        this.value = value;
+        this.resolution = resolution;
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public TimeResolution getResolution() {
+        return resolution;
+    }
+
+    @Override
+    public String toString() {
+        return "TimeSpan[" + "value=" + value + ", resolution=" + resolution + ']';
+    }
+}
