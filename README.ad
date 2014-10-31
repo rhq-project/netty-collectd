@@ -1,0 +1,7 @@
+= netty-collectd image:https://secure.travis-ci.org/rhq-project/netty-collectd.svg?branch=master["Build Status", link="https://travis-ci.org/rhq-project/netty-collectd"]
+
+A Netty decoder for [collectd] events
+
+For instructions on how to use, refer to the section xref:using[Using] below.
+
+== Using
