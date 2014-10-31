@@ -90,7 +90,7 @@ public class CollectdPartsDecoder extends MessageToMessageDecoder<DatagramPacket
             }
         }
         long stop = System.currentTimeMillis();
-        logger.info("Decoded datagram in {} ms", stop - start);
+        logger.debug("Decoded datagram in {} ms", stop - start);
     }
 
     private boolean hasReadableBytes(ByteBuf content, int count) {
