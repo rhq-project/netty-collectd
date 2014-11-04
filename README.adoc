@@ -102,6 +102,28 @@ public class MyCollectdEventHandler extends SimpleChannelInboundHandler<Event> {
 }
 ----
 
+== Limitations
+
+.types.db
+
+The decoder is not able to read http://collectd.org/documentation/manpages/types.db.5.shtml[type files, window="_blank"] yet.
+Consequently:
+
+* https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/values/SampleType.java[Sample types, window="_blank"]
+cannot be verified
+* it's not possible to give the sample's name
+
+.Notifications
+
+The decoder does not yet understand
+https://collectd.org/wiki/index.php/Notifications_and_thresholds#Notifications[notification messages, window="_blank"].
+They are ignored.
+
+.Signed or encrypted traffic
+
+The decoder does not yet support
+https://collectd.org/wiki/index.php/Networking_introduction#Cryptographic_setup[signed or encrypted data, window="_blank"].
+
 == Contributing
 
 Like the idea and want to give a hand? We appreciate any kind of contributions from documentation to bug fixing or
