@@ -108,5 +108,5 @@ Like the idea and want to give a hand? We appreciate any kind of contributions f
 feature enhancement.
 
 Join us in _#rhq.next_ on Freenode +
-Twitter: https://twitter.com/RHQ_Project[,window="_blank"] +
-Forum: https://developer.jboss.org/en/rhq/rhq-metrics[,window="_blank"] +
+Twitter: https://twitter.com/RHQ_Project[https://twitter.com/RHQ_Project ,window="_blank"] +
+Forum: https://developer.jboss.org/en/rhq/rhq-metrics[https://developer.jboss.org/en/rhq/rhq-metrics, window="_blank"] +
