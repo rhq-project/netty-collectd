@@ -1,19 +1,20 @@
 = netty-collectd image:https://secure.travis-ci.org/rhq-project/netty-collectd.svg?branch=master["Build Status", link="https://travis-ci.org/rhq-project/netty-collectd", window="_blank"]
 :linkattrs:
 
-A http://netty.io[Netty^] decoder for the https://collectd.org[collectd^] https://collectd.org/wiki/index.php/Binary_protocol[binary protocol^].
+A http://netty.io[Netty, window="_blank"] decoder for the https://collectd.org[collectd, window="_blank"] https://collectd.org/wiki/index.php/Binary_protocol[binary protocol, window="_blank"].
 
-For instructions on how to use, refer to the xref:Using[] section below.
+For instructions on how to use, refer to the https://github.com/rhq-project/netty-collectd#using[Using] section below.
 
 == About
 
 netty-collectd decodes collectd UDP datagrams. The decoding process results in the creation of
-https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/events/Event.java[Event^]
+https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/events/Event.java[Event, window="_blank"]
 object instances.
 
 Each event instance wraps:
 
-* the sender host (see _Hostname_ in http://collectd.org/documentation/manpages/collectd.conf.5.shtml#global_options[collectd.conf Global Options^])
+* the sender host
+(see _Hostname_ in http://collectd.org/documentation/manpages/collectd.conf.5.shtml#global_options[collectd.conf Global Options, window="_blank"])
 * a metric timestamp (when it was collected)
 * the plugin data (plugin and plugin instance names)
 * the type data (type and instance names)
@@ -33,7 +34,8 @@ We're working on making the bits available in a Maven repository.
 === Show me something quickly!
 
 You need to start a collectd process configured to send metrics to a remote peer.
-This is the job of the http://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_network[Network Plugin].
+This is the job of the
+http://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_network[Network Plugin, window="_blank"].
 
 ....
 LoadPlugin network
@@ -106,5 +108,5 @@ Like the idea and want to give a hand? We appreciate any kind of contributions f
 feature enhancement.
 
 Join us in _#rhq.next_ on Freenode +
-Twitter: https://twitter.com/RHQ_Project +
-Forum: https://developer.jboss.org/en/rhq/rhq-metrics +
+Twitter: https://twitter.com/RHQ_Project[,window="_blank"] +
+Forum: https://developer.jboss.org/en/rhq/rhq-metrics[,window="_blank"] +
