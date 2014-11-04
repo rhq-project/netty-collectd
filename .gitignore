@@ -10,3 +10,4 @@ release.properties
 .classpath
 *~
 *.DS_Store
+README.html
