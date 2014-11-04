@@ -3,7 +3,7 @@
 
 A http://netty.io[Netty^] decoder for the https://collectd.org[collectd^] https://collectd.org/wiki/index.php/Binary_protocol[binary protocol^].
 
-For instructions on how to use, refer to the <<Using>> section below.
+For instructions on how to use, refer to the xref:Using[] section below.
 
 == About
 
