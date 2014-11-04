@@ -23,15 +23,19 @@ Each event instance wraps:
 
 == Using
 
-First download the source or clone this repository.
+The snapshot versions binaries are hosted in the JBoss Snapshots repository.
+Read https://developer.jboss.org/wiki/MavenGettingStarted-Users[JBoss.org Maven repository guide] for setup instructions.
+
+Releases will be pushed to Central.
+
+=== Show me something quickly!
+
+https://github.com/rhq-project/netty-collectd/archive/master.zip[Download the source code] from GitHub
+or clone this repository.
 
 Then build it:
 
  mvn clean install
-
-We're working on making the bits available in a Maven repository.
-
-=== Show me something quickly!
 
 You need to start a collectd process configured to send metrics to a remote peer.
 This is the job of the
