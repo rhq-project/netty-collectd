@@ -104,7 +104,7 @@ public class MyCollectdEventHandler extends SimpleChannelInboundHandler<Event> {
 
 == Limitations
 
-.types.db
+*types.db*
 
 The decoder is not able to read http://collectd.org/documentation/manpages/types.db.5.shtml[type files, window="_blank"] yet.
 Consequently:
@@ -113,13 +113,13 @@ Consequently:
 cannot be verified
 * it's not possible to give the sample's name
 
-.Notifications
+*Notifications*
 
 The decoder does not yet understand
 https://collectd.org/wiki/index.php/Notifications_and_thresholds#Notifications[notification messages, window="_blank"].
 They are ignored.
 
-.Signed or encrypted traffic
+*Signed or encrypted traffic*
 
 The decoder does not yet support
 https://collectd.org/wiki/index.php/Networking_introduction#Cryptographic_setup[signed or encrypted data, window="_blank"].
