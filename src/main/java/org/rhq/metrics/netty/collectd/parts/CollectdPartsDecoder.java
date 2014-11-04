@@ -33,6 +33,8 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.rhq.metrics.netty.collectd.values.DoubleSample;
 import org.rhq.metrics.netty.collectd.values.IntegerSample;
 import org.rhq.metrics.netty.collectd.values.LongSample;
+import org.rhq.metrics.netty.collectd.values.Sample;
+import org.rhq.metrics.netty.collectd.values.SampleType;
 import org.rhq.metrics.netty.collectd.values.Values;
 
 /**

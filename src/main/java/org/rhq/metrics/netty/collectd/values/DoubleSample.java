@@ -16,9 +16,6 @@
 
 package org.rhq.metrics.netty.collectd.values;
 
-import org.rhq.metrics.netty.collectd.parts.Sample;
-import org.rhq.metrics.netty.collectd.parts.SampleType;
-
 /**
  * @author Thomas Segismont
  */

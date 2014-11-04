@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.parts;
+package org.rhq.metrics.netty.collectd.values;
 
 import java.util.HashMap;
 import java.util.Map;

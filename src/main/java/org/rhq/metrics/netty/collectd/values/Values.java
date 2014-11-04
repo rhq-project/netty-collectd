@@ -18,8 +18,6 @@ package org.rhq.metrics.netty.collectd.values;
 
 import java.util.List;
 
-import org.rhq.metrics.netty.collectd.parts.Sample;
-
 /**
  * @author Thomas Segismont
  */
