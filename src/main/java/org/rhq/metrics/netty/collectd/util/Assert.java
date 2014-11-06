@@ -17,16 +17,37 @@
 package org.rhq.metrics.netty.collectd.util;
 
 /**
+ * Simple assertion utilities.
+ *
  * @author Thomas Segismont
  */
 public class Assert {
 
+    /**
+     * Checks that <code>o</code> is not null. The error message is formatted with
+     * {@link String#format(String, Object...)} if <code>params</code> are not empty.
+     *
+     * @param o an object
+     * @param msg error message
+     * @param params error message parameters
+     * @throws IllegalArgumentException if <code>o</code> is null
+     */
     public static void assertNotNull(Object o, String msg, Object... params) {
         if (o == null) {
             throwIllegalArgumentException(msg, params);
         }
     }
 
+    /**
+     * Checks that <code>a == b</code>. The error message is formatted with
+     * {@link String#format(String, Object...)} if <code>params</code> are not empty.
+     *
+     * @param a an int
+     * @param b another int
+     * @param msg error message
+     * @param params error message parameters
+     * @throws IllegalArgumentException if <code>o</code> is null
+     */
     public static void assertEquals(int a, int b, String msg, Object... params) {
         if (a != b) {
             throwIllegalArgumentException(msg, params);
