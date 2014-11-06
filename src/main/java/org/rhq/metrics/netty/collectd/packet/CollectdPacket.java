@@ -21,6 +21,9 @@ import static org.rhq.metrics.netty.collectd.util.Assert.assertNotNull;
 import java.util.Arrays;
 
 /**
+ * A collectd <a href="https://collectd.org/wiki/index.php/Binary_protocol#Protocol_structure">packet</a>, composed of
+ * one or more "parts".
+ *
  * @author Thomas Segismont
  */
 public final class CollectdPacket {

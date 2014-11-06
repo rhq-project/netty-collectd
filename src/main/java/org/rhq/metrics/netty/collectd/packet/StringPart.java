@@ -17,6 +17,8 @@
 package org.rhq.metrics.netty.collectd.packet;
 
 /**
+ * Collectd <a href="https://collectd.org/wiki/index.php/Binary_protocol#String_parts">String Part</a>.
+ *
  * @author Thomas Segismont
  */
 public final class StringPart extends Part<String> {

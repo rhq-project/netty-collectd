@@ -17,7 +17,15 @@
 package org.rhq.metrics.netty.collectd.packet;
 
 /**
+ * Abstract structure representing a
+ * <a href="https://collectd.org/wiki/index.php/Binary_protocol#Protocol_structure">collectd datagram part</a>.
+ *
+ * A Part is composed of a {@link PartType} and a value.
+ *
  * @author Thomas Segismont
+ * @see NumericPart
+ * @see StringPart
+ * @see ValuePart
  */
 public abstract class Part<T> {
     private final PartType partType;

@@ -20,13 +20,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Enumerates <a href="https://collectd.org/wiki/index.php/Binary_protocol#Part_types">Part Types</a>.
+ *
  * @author Thomas Segismont
  */
 public enum PartType {
-    HOST(PartTypeId.HOST), TIME(PartTypeId.TIME), TIME_HIGH_RESOLUTION(PartTypeId.TIME_HIGH_RESOLUTION), PLUGIN(
-        PartTypeId.PLUGIN), PLUGIN_INSTANCE(PartTypeId.PLUGIN_INSTANCE), TYPE(PartTypeId.TYPE), INSTANCE(
-        PartTypeId.INSTANCE), VALUES(PartTypeId.VALUES), INTERVAL(PartTypeId.INTERVAL), INTERVAL_HIGH_RESOLUTION(
-        PartTypeId.INTERVAL_HIGH_RESOLUTION);
+    /** The name of the host to associate with subsequent data values. */
+    HOST(PartTypeId.HOST),
+    /** The timestamp to associate with subsequent data values, unix time format (seconds since epoch). **/
+    TIME(PartTypeId.TIME),
+    /** The timestamp to associate with subsequent data values. Time is defined in 2<sup>-30</sup> seconds since epoch. **/
+    TIME_HIGH_RESOLUTION(PartTypeId.TIME_HIGH_RESOLUTION),
+    /** The plugin name to associate with subsequent data values, e.g. "cpu". **/
+    PLUGIN(PartTypeId.PLUGIN),
+    /** The plugin instance name to associate with subsequent data values, e.g. "1". **/
+    PLUGIN_INSTANCE(PartTypeId.PLUGIN_INSTANCE),
+    /** The type name to associate with subsequent data values, e.g. "cpu". **/
+    TYPE(PartTypeId.TYPE),
+    /** The type instance name to associate with subsequent data values, e.g. "idle". **/
+    INSTANCE(PartTypeId.INSTANCE),
+    /** Data values. **/
+    VALUES(PartTypeId.VALUES),
+    /** The interval in which subsequent data values are collected, unix time format (seconds since epoch). **/
+    INTERVAL(PartTypeId.INTERVAL),
+    /** The interval in which subsequent data values are collected. The interval is given in 2<sup>-30</sup> seconds. **/
+    INTERVAL_HIGH_RESOLUTION(PartTypeId.INTERVAL_HIGH_RESOLUTION);
 
     private short id;
 
@@ -42,6 +60,10 @@ public enum PartType {
         }
     }
 
+    /**
+     * @param id part type id
+     * @return the {@link PartType} which id is <code>id</code>, null otherwise
+     */
     public static PartType findById(short id) {
         return TYPE_BY_ID.get(id);
     }

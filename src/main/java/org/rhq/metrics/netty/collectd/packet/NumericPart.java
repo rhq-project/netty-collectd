@@ -17,6 +17,8 @@
 package org.rhq.metrics.netty.collectd.packet;
 
 /**
+ * Collectd <a href="https://collectd.org/wiki/index.php/Binary_protocol#Numeric_parts">Numeric Part</a>.
+ *
  * @author Thomas Segismont
  */
 public final class NumericPart extends Part<Long> {

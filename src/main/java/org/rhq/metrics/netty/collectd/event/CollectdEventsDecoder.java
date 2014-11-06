@@ -34,7 +34,7 @@ import org.rhq.metrics.netty.collectd.packet.Part;
 import org.rhq.metrics.netty.collectd.packet.PartType;
 import org.rhq.metrics.netty.collectd.packet.StringPart;
 import org.rhq.metrics.netty.collectd.packet.Values;
-import org.rhq.metrics.netty.collectd.packet.ValuesPart;
+import org.rhq.metrics.netty.collectd.packet.ValuePart;
 
 /**
  * @author Thomas Segismont
@@ -108,6 +108,6 @@ public final class CollectdEventsDecoder extends MessageToMessageDecoder<Collect
     }
 
     private Values getValues(Part part) {
-        return ((ValuesPart) part).getValue();
+        return ((ValuePart) part).getValue();
     }
 }

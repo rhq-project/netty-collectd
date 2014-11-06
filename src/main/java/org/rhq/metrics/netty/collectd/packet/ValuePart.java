@@ -17,10 +17,12 @@
 package org.rhq.metrics.netty.collectd.packet;
 
 /**
+ * Collectd <a href="https://collectd.org/wiki/index.php/Binary_protocol#Value_parts">Value Part</a>.
+ *
  * @author Thomas Segismont
  */
-public final class ValuesPart extends Part<Values> {
-    public ValuesPart(PartType partType, Values values) {
+public final class ValuePart extends Part<Values> {
+    public ValuePart(PartType partType, Values values) {
         super(partType, values);
     }
 }

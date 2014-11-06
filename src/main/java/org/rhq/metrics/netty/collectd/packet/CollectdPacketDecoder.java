@@ -33,6 +33,8 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.rhq.metrics.netty.collectd.event.DataType;
 
 /**
+ * A Netty decoding handler: from {@link DatagramPacket} to {@link CollectdPacket}.
+ *
  * @author Thomas Segismont
  */
 @Sharable
@@ -44,7 +46,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
         long start = System.currentTimeMillis();
         ByteBuf content = packet.content();
         List<Part> parts = new ArrayList<Part>(100);
-        for (;;) {
+        for (; ; ) {
             if (!hasReadableBytes(content, 4)) {
                 break;
             }
@@ -61,25 +63,25 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
             }
             Part part;
             switch (partType) {
-            case HOST:
-            case PLUGIN:
-            case PLUGIN_INSTANCE:
-            case TYPE:
-            case INSTANCE:
-                part = new StringPart(partType, readStringPartContent(content, valueLength));
-                break;
-            case TIME:
-            case TIME_HIGH_RESOLUTION:
-            case INTERVAL:
-            case INTERVAL_HIGH_RESOLUTION:
-                part = new NumericPart(partType, readNumericPartContent(content));
-                break;
-            case VALUES:
-                part = new ValuesPart(partType, readValuePartContent(content, valueLength));
-                break;
-            default:
-                part = null;
-                content.skipBytes(valueLength);
+                case HOST:
+                case PLUGIN:
+                case PLUGIN_INSTANCE:
+                case TYPE:
+                case INSTANCE:
+                    part = new StringPart(partType, readStringPartContent(content, valueLength));
+                    break;
+                case TIME:
+                case TIME_HIGH_RESOLUTION:
+                case INTERVAL:
+                case INTERVAL_HIGH_RESOLUTION:
+                    part = new NumericPart(partType, readNumericPartContent(content));
+                    break;
+                case VALUES:
+                    part = new ValuePart(partType, readValuePartContent(content, valueLength));
+                    break;
+                default:
+                    part = null;
+                    content.skipBytes(valueLength);
             }
             //noinspection ConstantConditions
             if (part != null) {
@@ -104,7 +106,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
 
     private String readStringPartContent(ByteBuf content, int length) {
         String string = content.toString(content.readerIndex(), length - 1 /* collectd strings are \0 terminated */,
-            CharsetUtil.US_ASCII);
+                CharsetUtil.US_ASCII);
         content.skipBytes(length); // the previous call does not move the readerIndex
         return string;
     }
@@ -127,22 +129,22 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
             long value = content.readLong();
             // Now convert to the approriate type
             switch (dataType) {
-            case COUNTER:
-            case ABSOLUTE:
-                data[i] = value;
-                break;
-            case DERIVE:
-                data[i] = (int) value;
-                break;
-            case GAUGE:
-                data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(value));
-                break;
-            default:
-                logger.debug("Skipping unknown data type: {}", dataType);
+                case COUNTER:
+                case ABSOLUTE:
+                    data[i] = value;
+                    break;
+                case DERIVE:
+                    data[i] = (int) value;
+                    break;
+                case GAUGE:
+                    data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(value));
+                    break;
+                default:
+                    logger.debug("Skipping unknown data type: {}", dataType);
             }
         }
         // Skip any additionnal bytes
-        content.skipBytes(length - 2 /* total */- 9 /* typeId(1) + data(8) */* total);
+        content.skipBytes(length - 2 /* total */ - 9 /* typeId(1) + data(8) */ * total);
         return new Values(dataTypes, data);
     }
 }
