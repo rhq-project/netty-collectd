@@ -92,7 +92,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
 
         if (logger.isTraceEnabled()) {
             long stop = System.currentTimeMillis();
-            logger.trace("Decoded datagram {} in {} ms", collectdPacket, stop - start);
+            logger.trace("Decoded datagram in {} ms", stop - start);
         }
 
         out.add(collectdPacket);

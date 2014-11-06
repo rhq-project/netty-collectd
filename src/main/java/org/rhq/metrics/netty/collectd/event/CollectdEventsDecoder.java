@@ -93,7 +93,7 @@ public final class CollectdEventsDecoder extends MessageToMessageDecoder<Collect
 
         if (logger.isTraceEnabled()) {
             long stop = System.currentTimeMillis();
-            logger.trace("Decoded events {} in {} ms", events, stop - start);
+            logger.trace("Decoded events in {} ms", stop - start);
         }
 
         out.addAll(events);
