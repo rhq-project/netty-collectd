@@ -3,5 +3,4 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
-before_install: 'mvn -version'
-install: 'mvn clean verify -Dmaven.javadoc.skip=true -B'
+script: 'mvn clean verify -DfastBuild=true
