@@ -20,26 +20,61 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * The precision of a time duration.
+ *
  * @author Thomas Segismont
  */
 public enum TimeResolution {
-    SECONDS, HIGH_RES;
+    /** second precision. **/
+    SECONDS,
+    /** 2<sup>-30</sup> seconds precision. **/
+    HIGH_RES;
 
+    private static final double HIGH_RES_PRECISION = Math.pow(2, 30);
+
+    /**
+     * Converts to milliseconds the given <code>timeSpan</code>.
+     *
+     * @param timeSpan time duration to convert
+     * @return time duration in milliseconds
+     */
     public static long toMillis(TimeSpan timeSpan) {
         return toMillis(timeSpan.getValue(), timeSpan.getResolution());
     }
 
+    /**
+     * Converts to milliseconds the duration <code>val</code>, given at the {@link TimeResolution}
+     * <code>resolution</code>.
+     *
+     * @param val the duration
+     * @param resolution the precision
+     * @return time duration in milliseconds
+     */
     public static long toMillis(long val, TimeResolution resolution) {
         if (resolution == SECONDS) {
             return TimeUnit.MILLISECONDS.convert(val, TimeUnit.SECONDS);
         }
-        return (long) (((double) (val)) / 1073741.824);
+        return (long) ((1000d * (double) val) / HIGH_RES_PRECISION);
     }
 
-    public static Date toDate(TimeSpan timeSpan) {
-        return toDate(timeSpan.getValue(), timeSpan.getResolution());
+    /**
+     * Converts to {@link Date} the given <code>timestamp</code>.
+     *
+     * @param timestamp time duration since epoch
+     * @return the {@link Date} corresponding to the given <code>timestamp</code>
+     */
+    public static Date toDate(TimeSpan timestamp) {
+        return toDate(timestamp.getValue(), timestamp.getResolution());
     }
 
+    /**
+     * Converts to {@link Date} the <code>timestamp</code>, given at the {@link TimeResolution}
+     * <code>resolution</code>.
+     *
+     * @param timestamp time duration since epoch
+     * @param resolution the <code>timestamp</code> precision
+     * @return the {@link Date} corresponding to the given <code>timestamp</code>
+     */
     public static Date toDate(long timestamp, TimeResolution resolution) {
         return new Date(toMillis(timestamp, resolution));
     }
