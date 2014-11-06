@@ -30,6 +30,14 @@ import org.rhq.metrics.netty.collectd.event.CollectdEventsDecoder;
 import org.rhq.metrics.netty.collectd.packet.CollectdPacketDecoder;
 
 /**
+ * Simple test program which dumps decoded {@link org.rhq.metrics.netty.collectd.event.Event} instances to a logger.
+ * Start it with Maven:<br>
+ * <br>
+ * <code>mvn exec:java -Dexec.mainClass=org.rhq.metrics.netty.collectd.DumpToLog</code>
+ * <br>
+ * <br>
+ * Optionnaly the program accepts a single integer argument as UDP port (defaults to 25826).
+ *
  * @author Thomas Segismont
  */
 public class DumpToLog {

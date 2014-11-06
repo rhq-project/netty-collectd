@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.rhq.metrics.netty.collectd.event.Event;
 
 /**
+ * A channel handler which dumps {@link org.rhq.metrics.netty.collectd.event.Event} instances to a logger.
+ *
  * @author Thomas Segismont
  */
 @Sharable
