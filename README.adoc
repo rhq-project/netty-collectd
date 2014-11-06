@@ -18,7 +18,6 @@ Each event instance wraps:
 * a metric timestamp (when it was collected)
 * the plugin data (plugin and plugin instance names)
 * the type data (type and instance names)
-* the values
 
 == Using
 
@@ -113,8 +112,8 @@ public class MyCollectdEventHandler extends SimpleChannelInboundHandler<Event> {
 The decoder is not able to read http://collectd.org/documentation/manpages/types.db.5.shtml[type files, window="_blank"] yet.
 Consequently:
 
-* https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/event/ValueListEvent.java
-[ValueListEvent, window="_blank"] data types cannot be verified
+* https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/event/ValueListEvent.java[ValueListEvent, window="_blank"]
+data types cannot be verified
 * it's not possible to determine ValueListEvent data names
 
 *Notifications*
