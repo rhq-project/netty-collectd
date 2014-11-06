@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.values;
+package org.rhq.metrics.netty.collectd.event;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,29 +22,28 @@ import java.util.Map;
 /**
  * @author Thomas Segismont
  */
-public enum SampleType {
-    COUNTER(SampleTypeId.COUNTER), GAUGE(SampleTypeId.GAUGE), DERIVE(SampleTypeId.DERIVE), ABSOLUTE(
-        SampleTypeId.ABSOLUTE);
+public enum DataType {
+    COUNTER(DataTypeId.COUNTER), GAUGE(DataTypeId.GAUGE), DERIVE(DataTypeId.DERIVE), ABSOLUTE(DataTypeId.ABSOLUTE);
 
     private byte id;
 
-    SampleType(byte id) {
+    DataType(byte id) {
         this.id = id;
     }
 
-    private static final Map<Byte, SampleType> TYPE_BY_ID = new HashMap<Byte, SampleType>();
+    private static final Map<Byte, DataType> TYPE_BY_ID = new HashMap<Byte, DataType>();
 
     static {
-        for (SampleType partType : SampleType.values()) {
-            TYPE_BY_ID.put(partType.id, partType);
+        for (DataType dataType : DataType.values()) {
+            TYPE_BY_ID.put(dataType.id, dataType);
         }
     }
 
-    public static SampleType findById(byte id) {
+    public static DataType findById(byte id) {
         return TYPE_BY_ID.get(id);
     }
 
-    private static class SampleTypeId {
+    private static class DataTypeId {
         private static final byte COUNTER = 0x0;
         private static final byte GAUGE = 0x1;
         private static final byte DERIVE = 0x2;

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.parts;
+package org.rhq.metrics.netty.collectd.packet;
 
 /**
  * @author Thomas Segismont
  */
-public final class NumericPart extends Part<Long> {
-    public NumericPart(PartType partType, Long value) {
-        super(partType, value);
+public final class ValuesPart extends Part<Values> {
+    public ValuesPart(PartType partType, Values values) {
+        super(partType, values);
     }
 }

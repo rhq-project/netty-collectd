@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.values;
-
-import java.util.List;
+package org.rhq.metrics.netty.collectd.packet;
 
 /**
  * @author Thomas Segismont
  */
-public final class Values {
-    private final List<Sample> samples;
-
-    public Values(List<Sample> samples) {
-        this.samples = samples;
-    }
-
-    public List<Sample> getSamples() {
-        return samples;
-    }
-
-    @Override
-    public String toString() {
-        return "Values[" + "samples=" + samples + ']';
+public final class NumericPart extends Part<Long> {
+    public NumericPart(PartType partType, Long value) {
+        super(partType, value);
     }
 }

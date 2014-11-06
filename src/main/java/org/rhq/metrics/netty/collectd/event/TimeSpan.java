@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.parts;
+package org.rhq.metrics.netty.collectd.event;
 
 /**
  * @author Thomas Segismont
  */
-public abstract class Part<T> {
-    private final PartType partType;
-    private final T value;
+public final class TimeSpan {
+    private final long value;
+    private final TimeResolution resolution;
 
-    protected Part(PartType partType, T value) {
-        this.partType = partType;
+    public TimeSpan(long value, TimeResolution resolution) {
         this.value = value;
+        this.resolution = resolution;
     }
 
-    public final PartType getPartType() {
-        return partType;
-    }
-
-    public final T getValue() {
+    public long getValue() {
         return value;
+    }
+
+    public TimeResolution getResolution() {
+        return resolution;
     }
 
     @Override
     public String toString() {
-        return "Part[" + "partType=" + partType + ", value=" + value + ']';
+        return "TimeSpan[" + "value=" + value + ", resolution=" + resolution + ']';
     }
 }

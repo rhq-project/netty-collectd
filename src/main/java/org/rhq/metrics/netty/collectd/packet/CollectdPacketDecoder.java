@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.parts;
+package org.rhq.metrics.netty.collectd.packet;
 
 import static io.netty.channel.ChannelHandler.Sharable;
 
@@ -30,24 +30,20 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
-import org.rhq.metrics.netty.collectd.values.DoubleSample;
-import org.rhq.metrics.netty.collectd.values.IntegerSample;
-import org.rhq.metrics.netty.collectd.values.LongSample;
-import org.rhq.metrics.netty.collectd.values.Sample;
-import org.rhq.metrics.netty.collectd.values.SampleType;
-import org.rhq.metrics.netty.collectd.values.Values;
+import org.rhq.metrics.netty.collectd.event.DataType;
 
 /**
  * @author Thomas Segismont
  */
 @Sharable
-public class CollectdPartsDecoder extends MessageToMessageDecoder<DatagramPacket> {
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(CollectdPartsDecoder.class);
+public final class CollectdPacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(CollectdPacketDecoder.class);
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext context, DatagramPacket packet, List<Object> out) throws Exception {
         long start = System.currentTimeMillis();
-        ByteBuf content = msg.content();
+        ByteBuf content = packet.content();
+        List<Part> parts = new ArrayList<Part>(100);
         for (;;) {
             if (!hasReadableBytes(content, 4)) {
                 break;
@@ -79,7 +75,7 @@ public class CollectdPartsDecoder extends MessageToMessageDecoder<DatagramPacket
                 part = new NumericPart(partType, readNumericPartContent(content));
                 break;
             case VALUES:
-                part = new ValuePart(partType, readValuePartContent(content, valueLength));
+                part = new ValuesPart(partType, readValuePartContent(content, valueLength));
                 break;
             default:
                 part = null;
@@ -87,12 +83,19 @@ public class CollectdPartsDecoder extends MessageToMessageDecoder<DatagramPacket
             }
             //noinspection ConstantConditions
             if (part != null) {
-                logger.trace("Decoded new part: {}", part);
-                out.add(part);
+                logger.trace("Decoded part: {}", part);
+                parts.add(part);
             }
         }
-        long stop = System.currentTimeMillis();
-        logger.debug("Decoded datagram in {} ms", stop - start);
+
+        CollectdPacket collectdPacket = new CollectdPacket(parts.toArray(new Part[parts.size()]));
+
+        if (logger.isDebugEnabled()) {
+            long stop = System.currentTimeMillis();
+            logger.debug("Decoded datagram {} in {} ms", collectdPacket, stop - start);
+        }
+
+        out.add(collectdPacket);
     }
 
     private boolean hasReadableBytes(ByteBuf content, int count) {
@@ -111,35 +114,35 @@ public class CollectdPartsDecoder extends MessageToMessageDecoder<DatagramPacket
     }
 
     private Values readValuePartContent(ByteBuf content, int length) {
-        int samplesCount = content.readUnsignedShort();
-        SampleType[] sampleTypes = new SampleType[samplesCount];
-        for (int i = 0; i < samplesCount; i++) {
+        int total = content.readUnsignedShort();
+        DataType[] dataTypes = new DataType[total];
+        for (int i = 0; i < total; i++) {
             byte sampleTypeId = content.readByte();
-            sampleTypes[i] = SampleType.findById(sampleTypeId);
+            dataTypes[i] = DataType.findById(sampleTypeId);
         }
-        List<Sample> samples = new ArrayList<Sample>(samplesCount);
-        for (int i = 0; i < samplesCount; i++) {
-            SampleType sampleType = sampleTypes[i];
+        Number[] data = new Number[total];
+        for (int i = 0; i < total; i++) {
+            DataType dataType = dataTypes[i];
             // Read the 64 bits field
             long value = content.readLong();
-            // Now adjust convert to a real value
-            switch (sampleType) {
+            // Now convert to the approriate type
+            switch (dataType) {
             case COUNTER:
             case ABSOLUTE:
-                samples.add(new LongSample(sampleType, value));
+                data[i] = value;
                 break;
             case DERIVE:
-                samples.add(new IntegerSample(sampleType, (int) value));
+                data[i] = (int) value;
                 break;
             case GAUGE:
-                samples.add(new DoubleSample(sampleType, Double.longBitsToDouble(ByteBufUtil.swapLong(value))));
+                data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(value));
                 break;
             default:
-                logger.debug("Skipping unknown sample type: {}", sampleType);
+                logger.debug("Skipping unknown data type: {}", dataType);
             }
         }
         // Skip any additionnal bytes
-        content.skipBytes(length - 2 /* samplesCount */- 9 /* typeId(1) + data(8) */* samplesCount);
-        return new Values(samples);
+        content.skipBytes(length - 2 /* total */- 9 /* typeId(1) + data(8) */* total);
+        return new Values(dataTypes, data);
     }
 }

@@ -26,8 +26,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
-import org.rhq.metrics.netty.collectd.events.CollectdEventsDecoder;
-import org.rhq.metrics.netty.collectd.parts.CollectdPartsDecoder;
+import org.rhq.metrics.netty.collectd.event.CollectdEventsDecoder;
+import org.rhq.metrics.netty.collectd.packet.CollectdPacketDecoder;
 
 /**
  * @author Thomas Segismont
@@ -43,7 +43,7 @@ public class DumpToLog {
             @Override
             protected void initChannel(Channel channel) throws Exception {
                 ChannelPipeline pipeline = channel.pipeline();
-                pipeline.addLast(new CollectdPartsDecoder());
+                pipeline.addLast(new CollectdPacketDecoder());
                 pipeline.addLast(new CollectdEventsDecoder());
                 pipeline.addLast(new DumpToLogEventHandler());
             }

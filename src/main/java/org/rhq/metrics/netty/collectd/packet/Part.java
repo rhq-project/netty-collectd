@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.values;
+package org.rhq.metrics.netty.collectd.packet;
 
 /**
  * @author Thomas Segismont
  */
-public abstract class Sample<T> {
-    private final SampleType sampleType;
-    private final T data;
+public abstract class Part<T> {
+    private final PartType partType;
+    private final T value;
 
-    public Sample(SampleType sampleType, T data) {
-        this.sampleType = sampleType;
-        this.data = data;
+    protected Part(PartType partType, T value) {
+        this.partType = partType;
+        this.value = value;
     }
 
-    public final SampleType getSampleType() {
-        return sampleType;
+    public final PartType getPartType() {
+        return partType;
     }
 
-    public final T getData() {
-        return data;
+    public final T getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return "Sample[" + "sampleType=" + sampleType + ", data=" + data + ']';
+        return "Part[" + "partType=" + partType + ", value=" + value + ']';
     }
 }

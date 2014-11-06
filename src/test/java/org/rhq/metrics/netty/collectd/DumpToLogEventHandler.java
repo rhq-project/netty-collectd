@@ -24,7 +24,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.rhq.metrics.netty.collectd.events.Event;
+import org.rhq.metrics.netty.collectd.event.Event;
 
 /**
  * @author Thomas Segismont

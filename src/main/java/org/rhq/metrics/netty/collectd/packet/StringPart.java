@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.values;
+package org.rhq.metrics.netty.collectd.packet;
 
 /**
  * @author Thomas Segismont
  */
-public final class IntegerSample extends Sample<Integer> {
-    public IntegerSample(SampleType sampleType, Integer data) {
-        super(sampleType, data);
+public final class StringPart extends Part<String> {
+    public StringPart(PartType partType, String value) {
+        super(partType, value);
     }
 }

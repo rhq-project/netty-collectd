@@ -14,15 +14,29 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.parts;
+package org.rhq.metrics.netty.collectd.packet;
 
-import org.rhq.metrics.netty.collectd.values.Values;
+import static org.rhq.metrics.netty.collectd.util.Assert.assertNotNull;
+
+import java.util.Arrays;
 
 /**
  * @author Thomas Segismont
  */
-public class ValuePart extends Part<Values> {
-    public ValuePart(PartType partType, Values values) {
-        super(partType, values);
+public final class CollectdPacket {
+    private final Part[] parts;
+
+    public CollectdPacket(Part[] parts) {
+        assertNotNull(parts, "parts is null");
+        this.parts = parts;
+    }
+
+    public Part[] getParts() {
+        return parts;
+    }
+
+    @Override
+    public String toString() {
+        return "Packet[" + "parts=" + Arrays.asList(parts) + ']';
     }
 }

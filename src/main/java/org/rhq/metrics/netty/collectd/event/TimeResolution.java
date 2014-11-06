@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.rhq.metrics.netty.collectd.events;
+package org.rhq.metrics.netty.collectd.event;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -25,11 +25,19 @@ import java.util.concurrent.TimeUnit;
 public enum TimeResolution {
     SECONDS, HIGH_RES;
 
+    public static long toMillis(TimeSpan timeSpan) {
+        return toMillis(timeSpan.getValue(), timeSpan.getResolution());
+    }
+
     public static long toMillis(long val, TimeResolution resolution) {
         if (resolution == SECONDS) {
             return TimeUnit.MILLISECONDS.convert(val, TimeUnit.SECONDS);
         }
         return (long) (((double) (val)) / 1073741.824);
+    }
+
+    public static Date toDate(TimeSpan timeSpan) {
+        return toDate(timeSpan.getValue(), timeSpan.getResolution());
     }
 
     public static Date toDate(long timestamp, TimeResolution resolution) {

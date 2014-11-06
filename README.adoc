@@ -8,7 +8,7 @@ For instructions on how to use, refer to the https://github.com/rhq-project/nett
 == About
 
 netty-collectd decodes collectd UDP datagrams. The decoding process results in the creation of
-https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/events/Event.java[Event, window="_blank"]
+https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/event/Event.java[Event, window="_blank"]
 object instances.
 
 Each event instance wraps:
@@ -19,12 +19,12 @@ Each event instance wraps:
 * the plugin data (plugin and plugin instance names)
 * the type data (type and instance names)
 * the values
-* the interval (how often this metric is collected)
 
 == Using
 
 The snapshot versions binaries are hosted in the JBoss Snapshots repository.
-Read https://developer.jboss.org/wiki/MavenGettingStarted-Users[JBoss.org Maven repository guide] for setup instructions.
+Read https://developer.jboss.org/wiki/MavenGettingStarted-Users[JBoss.org Maven repository guide, window="_blank"]
+for setup instructions.
 
 Releases will be pushed to Central.
 
@@ -79,7 +79,7 @@ bootstrap.group(group).channel(NioDatagramChannel.class).handler(new ChannelInit
     @Override
     protected void initChannel(Channel channel) throws Exception {
         ChannelPipeline pipeline = channel.pipeline();
-        pipeline.addLast(new CollectdPartsDecoder()); // Add CollectdPartsDecoder first
+        pipeline.addLast(new CollectdPacketDecoder()); // Add CollectdPacketDecoder first
         pipeline.addLast(new CollectdEventsDecoder()); // Then CollectdEventsDecoder
         pipeline.addLast(new MyCollectdEventHandler()); // Consume events in your own handler
     }
@@ -95,13 +95,13 @@ import static io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import org.rhq.metrics.netty.collectd.events.Event;
+import org.rhq.metrics.netty.collectd.event.Event;
 
 @Sharable
 public class MyCollectdEventHandler extends SimpleChannelInboundHandler<Event> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
-        // Do whatever you need with the org.rhq.metrics.netty.collectd.events.Event instance
+        // Do whatever you need with the org.rhq.metrics.netty.collectd.event.Event instance
     }
 }
 ----
@@ -113,9 +113,9 @@ public class MyCollectdEventHandler extends SimpleChannelInboundHandler<Event> {
 The decoder is not able to read http://collectd.org/documentation/manpages/types.db.5.shtml[type files, window="_blank"] yet.
 Consequently:
 
-* https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/values/SampleType.java[Sample types, window="_blank"]
-cannot be verified
-* it's not possible to give the sample's name
+* https://github.com/rhq-project/netty-collectd/blob/master/src/main/java/org/rhq/metrics/netty/collectd/event/ValueListEvent.java
+[ValueListEvent, window="_blank"] data types cannot be verified
+* it's not possible to determine ValueListEvent data names
 
 *Notifications*
 
