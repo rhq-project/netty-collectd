@@ -45,6 +45,7 @@ public final class CollectdEventsDecoder extends MessageToMessageDecoder<Collect
 
     @Override
     protected void decode(ChannelHandlerContext context, CollectdPacket packet, List<Object> out) throws Exception {
+        long start = System.currentTimeMillis();
         String host = null, pluginName = null, pluginInstance = null, typeName = null, typeInstance = null;
         TimeSpan timestamp = null, interval = null;
         List<Event> events = new ArrayList<Event>(50);
@@ -82,12 +83,19 @@ public final class CollectdEventsDecoder extends MessageToMessageDecoder<Collect
                 Number[] values = getValues(part).getData();
                 ValueListEvent event = new ValueListEvent(host, timestamp, pluginName, pluginInstance, typeName,
                     typeInstance, values, interval);
+                logger.trace("Decoded ValueListEvent: {}", event);
                 events.add(event);
                 break;
             default:
                 logger.debug("Skipping unknown part type: {}", partType);
             }
         }
+
+        if (logger.isTraceEnabled()) {
+            long stop = System.currentTimeMillis();
+            logger.trace("Decoded events {} in {} ms", events, stop - start);
+        }
+
         out.addAll(events);
     }
 
