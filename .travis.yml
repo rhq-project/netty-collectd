@@ -3,5 +3,10 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#rhq.next"
+    on_success: change
 install: 'mvn install -DskipTests=true -DfastBuild=true -B'
 script: 'mvn verify -DfastBuild=true -B'
