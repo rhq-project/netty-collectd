@@ -58,6 +58,13 @@ public enum PartType {
         this.id = id;
     }
 
+    /**
+     * @return the part type id
+     */
+    public short getId() {
+        return id;
+    }
+
     private static final Map<Short, PartType> TYPE_BY_ID = new HashMap<Short, PartType>();
 
     static {

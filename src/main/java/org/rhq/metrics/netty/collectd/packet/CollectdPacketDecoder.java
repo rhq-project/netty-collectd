@@ -18,6 +18,7 @@ package org.rhq.metrics.netty.collectd.packet;
 
 import static io.netty.channel.ChannelHandler.Sharable;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
         long start = System.currentTimeMillis();
         ByteBuf content = packet.content();
         List<Part> parts = new ArrayList<Part>(100);
-        for (; ; ) {
+        for (;;) {
             if (!hasReadableBytes(content, 4)) {
                 break;
             }
@@ -63,25 +64,25 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
             }
             Part part;
             switch (partType) {
-                case HOST:
-                case PLUGIN:
-                case PLUGIN_INSTANCE:
-                case TYPE:
-                case INSTANCE:
-                    part = new StringPart(partType, readStringPartContent(content, valueLength));
-                    break;
-                case TIME:
-                case TIME_HIGH_RESOLUTION:
-                case INTERVAL:
-                case INTERVAL_HIGH_RESOLUTION:
-                    part = new NumericPart(partType, readNumericPartContent(content));
-                    break;
-                case VALUES:
-                    part = new ValuePart(partType, readValuePartContent(content, valueLength));
-                    break;
-                default:
-                    part = null;
-                    content.skipBytes(valueLength);
+            case HOST:
+            case PLUGIN:
+            case PLUGIN_INSTANCE:
+            case TYPE:
+            case INSTANCE:
+                part = new StringPart(partType, readStringPartContent(content, valueLength));
+                break;
+            case TIME:
+            case TIME_HIGH_RESOLUTION:
+            case INTERVAL:
+            case INTERVAL_HIGH_RESOLUTION:
+                part = new NumericPart(partType, readNumericPartContent(content));
+                break;
+            case VALUES:
+                part = new ValuePart(partType, readValuePartContent(content, valueLength));
+                break;
+            default:
+                part = null;
+                content.skipBytes(valueLength);
             }
             //noinspection ConstantConditions
             if (part != null) {
@@ -90,14 +91,17 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
             }
         }
 
-        CollectdPacket collectdPacket = new CollectdPacket(parts.toArray(new Part[parts.size()]));
-
         if (logger.isTraceEnabled()) {
             long stop = System.currentTimeMillis();
             logger.trace("Decoded datagram in {} ms", stop - start);
         }
 
-        out.add(collectdPacket);
+        if (parts.size() > 0) {
+            CollectdPacket collectdPacket = new CollectdPacket(parts.toArray(new Part[parts.size()]));
+            out.add(collectdPacket);
+        } else {
+            logger.debug("No parts decoded, no CollectdPacket output");
+        }
     }
 
     private boolean hasReadableBytes(ByteBuf content, int count) {
@@ -106,7 +110,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
 
     private String readStringPartContent(ByteBuf content, int length) {
         String string = content.toString(content.readerIndex(), length - 1 /* collectd strings are \0 terminated */,
-                CharsetUtil.US_ASCII);
+            CharsetUtil.US_ASCII);
         content.skipBytes(length); // the previous call does not move the readerIndex
         return string;
     }
@@ -116,6 +120,7 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
     }
 
     private Values readValuePartContent(ByteBuf content, int length) {
+        int beginIndex = content.readerIndex();
         int total = content.readUnsignedShort();
         DataType[] dataTypes = new DataType[total];
         for (int i = 0; i < total; i++) {
@@ -125,26 +130,28 @@ public final class CollectdPacketDecoder extends MessageToMessageDecoder<Datagra
         Number[] data = new Number[total];
         for (int i = 0; i < total; i++) {
             DataType dataType = dataTypes[i];
-            // Read the 64 bits field
-            long value = content.readLong();
-            // Now convert to the approriate type
             switch (dataType) {
-                case COUNTER:
-                case ABSOLUTE:
-                    data[i] = value;
-                    break;
-                case DERIVE:
-                    data[i] = (int) value;
-                    break;
-                case GAUGE:
-                    data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(value));
-                    break;
-                default:
-                    logger.debug("Skipping unknown data type: {}", dataType);
+            case COUNTER:
+            case ABSOLUTE:
+                byte[] valueBytes = new byte[8];
+                content.readBytes(valueBytes);
+                data[i] = new BigInteger(1, valueBytes);
+                break;
+            case DERIVE:
+                data[i] = content.readLong();
+                break;
+            case GAUGE:
+                data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(content.readLong()));
+                break;
+            default:
+                logger.debug("Skipping unknown data type: {}", dataType);
             }
         }
         // Skip any additionnal bytes
-        content.skipBytes(length - 2 /* total */ - 9 /* typeId(1) + data(8) */ * total);
+        int readCount = content.readerIndex() - beginIndex;
+        if (length > readCount) {
+            content.skipBytes(readCount - length);
+        }
         return new Values(dataTypes, data);
     }
 }

@@ -1,0 +1,237 @@
+/*
+ * Copyright 2014 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.rhq.metrics.netty.collectd.packet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.rhq.metrics.netty.collectd.packet.PartType.HOST;
+import static org.rhq.metrics.netty.collectd.packet.PartType.INSTANCE;
+import static org.rhq.metrics.netty.collectd.packet.PartType.INTERVAL;
+import static org.rhq.metrics.netty.collectd.packet.PartType.INTERVAL_HIGH_RESOLUTION;
+import static org.rhq.metrics.netty.collectd.packet.PartType.PLUGIN;
+import static org.rhq.metrics.netty.collectd.packet.PartType.PLUGIN_INSTANCE;
+import static org.rhq.metrics.netty.collectd.packet.PartType.TIME;
+import static org.rhq.metrics.netty.collectd.packet.PartType.TIME_HIGH_RESOLUTION;
+import static org.rhq.metrics.netty.collectd.packet.PartType.TYPE;
+import static org.rhq.metrics.netty.collectd.packet.PartType.VALUES;
+
+import java.math.BigInteger;
+import java.net.InetSocketAddress;
+import java.util.Arrays;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.channel.socket.DatagramPacket;
+import io.netty.util.CharsetUtil;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.core.IsEqual;
+import org.junit.Test;
+
+import org.rhq.metrics.netty.collectd.event.DataType;
+
+public class PacketDecodingTest {
+    private static final InetSocketAddress DUMMY_ADDRESS = InetSocketAddress.createUnresolved("dummy", 9999);
+
+    @Test
+    public void shouldDecodeHostPart() {
+        shouldDecodeStringPart("marseille", HOST);
+    }
+
+    @Test
+    public void shouldDecodePluginPart() {
+        shouldDecodeStringPart("marseille", PLUGIN);
+    }
+
+    @Test
+    public void shouldDecodePluginInstancePart() {
+        shouldDecodeStringPart("marseille", PLUGIN_INSTANCE);
+    }
+
+    @Test
+    public void shouldDecodeTypePart() {
+        shouldDecodeStringPart("marseille", TYPE);
+    }
+
+    @Test
+    public void shouldDecodeTypeInstancePart() {
+        shouldDecodeStringPart("marseille", INSTANCE);
+    }
+
+    private void shouldDecodeStringPart(String value, PartType partType) {
+        shouldDecodePart(value, partType, createStringPartBuffer(value, partType), StringPart.class);
+    }
+
+    private ByteBuf createStringPartBuffer(String value, PartType partType) {
+        ByteBuf buffer = Unpooled.buffer();
+        buffer.writeShort(partType.getId());
+        ByteBuf src = Unpooled.copiedBuffer(value, CharsetUtil.US_ASCII);
+        buffer.writeShort(4 + src.readableBytes() + 1);
+        buffer.writeBytes(src);
+        buffer.writeByte(0);
+        return buffer;
+    }
+
+    @Test
+    public void shouldDecodeTimePart() {
+        shouldDecodeNumericPart(4505408l, TIME);
+    }
+
+    @Test
+    public void shouldDecodeTimeHighResolutionPart() {
+        shouldDecodeNumericPart(4505408l, TIME_HIGH_RESOLUTION);
+    }
+
+    @Test
+    public void shouldDecodeIntervalPart() {
+        shouldDecodeNumericPart(4505408l, INTERVAL);
+    }
+
+    @Test
+    public void shouldDecodeIntervalHighResolutionPart() {
+        shouldDecodeNumericPart(4505408l, INTERVAL_HIGH_RESOLUTION);
+    }
+
+    private void shouldDecodeNumericPart(Long value, PartType partType) {
+        shouldDecodePart(value, partType, createNumericPartBuffer(value, partType), NumericPart.class);
+    }
+
+    private ByteBuf createNumericPartBuffer(Long value, PartType partType) {
+        ByteBuf buffer = Unpooled.buffer();
+        buffer.writeShort(partType.getId());
+        buffer.writeShort(12);
+        buffer.writeLong(value);
+        return buffer;
+    }
+
+    @Test
+    public void shouldDecodeValuesPart() {
+        DataType[] dataTypes = DataType.values();
+        Number[] data = new Number[dataTypes.length];
+        for (int i = 0; i < data.length; i++) {
+            DataType dataType = dataTypes[i];
+            switch (dataType) {
+            case COUNTER:
+            case ABSOLUTE:
+                byte[] valueBytes = new byte[8];
+                Arrays.fill(valueBytes, (byte) 4);
+                data[i] = new BigInteger(1, valueBytes);
+                break;
+            case DERIVE:
+                data[i] = 981254l;
+                break;
+            case GAUGE:
+                data[i] = 15784.02564d;
+                //                    data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(content.readLong()));
+                break;
+            default:
+                fail("Unknown data type: " + dataType);
+            }
+        }
+
+        final Values values = new Values(dataTypes, data);
+
+        ByteBuf payloadBuffer = Unpooled.buffer();
+        for (int i = 0; i < data.length; i++) {
+            payloadBuffer.writeByte(dataTypes[i].getId());
+        }
+        for (int i = 0; i < data.length; i++) {
+            DataType dataType = dataTypes[i];
+            switch (dataType) {
+            case COUNTER:
+            case ABSOLUTE:
+                BigInteger bigInteger = (BigInteger) data[i];
+                payloadBuffer.writeBytes(bigInteger.toByteArray());
+                break;
+            case DERIVE:
+                payloadBuffer.writeLong((Long) data[i]);
+                break;
+            case GAUGE:
+                payloadBuffer.writeLong(ByteBufUtil.swapLong(Double.doubleToLongBits((Double) data[i])));
+                break;
+            default:
+                fail("Unknown data type: " + dataType);
+            }
+        }
+
+        ByteBuf headerBuffer = Unpooled.buffer();
+        headerBuffer.writeShort(VALUES.getId());
+        headerBuffer.writeShort(6 + payloadBuffer.writerIndex());
+        headerBuffer.writeShort(data.length);
+
+        ByteBuf buffer = Unpooled.buffer();
+        buffer.writeBytes(headerBuffer.duplicate()).writeBytes(payloadBuffer.duplicate());
+
+        shouldDecodePart(values, VALUES, buffer, ValuePart.class, new ValuesMatcher(values));
+    }
+
+    private void shouldDecodePart(Object value, PartType partType, ByteBuf buffer, Class<? extends Part> partClass) {
+        shouldDecodePart(value, partType, buffer, partClass, new IsEqual<Object>(value));
+    }
+
+    private void shouldDecodePart(Object value, PartType partType, ByteBuf buffer, Class<? extends Part> partClass,
+        Matcher<Object> matcher) {
+        DatagramPacket datagramPacket = new DatagramPacket(buffer.duplicate(), DUMMY_ADDRESS);
+
+        EmbeddedChannel channel = new EmbeddedChannel(new CollectdPacketDecoder());
+        assertTrue("Expected a CollectdPacket", channel.writeInbound(datagramPacket));
+
+        Object output = channel.readInbound();
+        assertEquals(CollectdPacket.class, output.getClass());
+
+        CollectdPacket collectdPacket = (CollectdPacket) output;
+        Part[] parts = collectdPacket.getParts();
+        assertEquals("Expected only one part in the packet", 1, parts.length);
+
+        Part part = parts[0];
+        assertEquals(partClass, part.getClass());
+        assertEquals(partType, part.getPartType());
+        assertThat(part.getValue(), matcher);
+
+        assertNull("Expected just one CollectdPacket", channel.readInbound());
+    }
+
+    private static class ValuesMatcher extends BaseMatcher<Object> {
+        private final Values expected;
+
+        public ValuesMatcher(Values expected) {
+            this.expected = expected;
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            if (!(item instanceof Values)) {
+                return false;
+            }
+            Values actual = (Values) item;
+            return Arrays.equals(expected.getData(), actual.getData())
+                && Arrays.equals(expected.getDataTypes(), actual.getDataTypes());
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendValue(expected);
+        }
+    }
+}

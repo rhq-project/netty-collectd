@@ -48,6 +48,13 @@ public enum DataType {
         this.id = id;
     }
 
+    /**
+     * @return data type id
+     */
+    public byte getId() {
+        return id;
+    }
+
     private static final Map<Byte, DataType> TYPE_BY_ID = new HashMap<Byte, DataType>();
 
     static {
