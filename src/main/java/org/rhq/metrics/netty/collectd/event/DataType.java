@@ -20,10 +20,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Enumerates <a href="https://collectd.org/wiki/index.php/Data_source">Data source types</a>.
  * @author Thomas Segismont
  */
 public enum DataType {
-    COUNTER(DataTypeId.COUNTER), GAUGE(DataTypeId.GAUGE), DERIVE(DataTypeId.DERIVE), ABSOLUTE(DataTypeId.ABSOLUTE);
+    /**
+     * Gauges are for measurements which may go up or down, like free disk space.
+     **/
+    GAUGE(DataTypeId.GAUGE),
+    /**
+     * Derives are for measurements which rate is interesting, like network packets transmitted.
+     */
+    DERIVE(DataTypeId.DERIVE),
+    /**
+     * Counters are similiar to derives, but vary circularly between the min and max value; like closed web sessions
+     * since application server start.
+     */
+    COUNTER(DataTypeId.COUNTER),
+    /**
+     * Absolute is similar to counter, but is reset to min any time it is read.
+     */
+    ABSOLUTE(DataTypeId.ABSOLUTE);
 
     private byte id;
 
@@ -39,6 +56,10 @@ public enum DataType {
         }
     }
 
+    /**
+     * @param id data type id
+     * @return the {@link DataType} which id is <code>id</code>, null otherwise
+     */
     public static DataType findById(byte id) {
         return TYPE_BY_ID.get(id);
     }

@@ -21,12 +21,27 @@ import static org.rhq.metrics.netty.collectd.util.Assert.assertNotNull;
 import java.util.Arrays;
 
 /**
+ * Event emitted by the {@link CollectdEventsDecoder} and signaling a decoded collectd
+ * <a href="https://collectd.org/wiki/index.php/Value_list">Value List</a>.
+ *
  * @author Thomas Segismont
  */
 public final class ValueListEvent extends Event {
     private final Number[] values;
     private final TimeSpan interval;
 
+    /**
+     * Creates a new Value List event.
+     *
+     * @param host hostname of the machine where the values were collected
+     * @param timestamp when they were collected
+     * @param pluginName the corresponding collectd plugin, e.g. "cpu"
+     * @param pluginInstance the corresponding collectd plugin instance, e.g. "1"
+     * @param typeName the corresponding collectd type, e.g. "cpu"
+     * @param typeInstance  the corresponding collectd type instance, e.g. "idle"
+     * @param values the metrics, cannot be null
+     * @param interval how often these metrics are collected, cannot be null
+     */
     public ValueListEvent(String host, TimeSpan timestamp, String pluginName, String pluginInstance, String typeName,
         String typeInstance, Number[] values, TimeSpan interval) {
         super(host, timestamp, pluginName, pluginInstance, typeName, typeInstance);

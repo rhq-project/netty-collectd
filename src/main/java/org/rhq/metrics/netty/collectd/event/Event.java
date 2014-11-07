@@ -17,7 +17,10 @@
 package org.rhq.metrics.netty.collectd.event;
 
 /**
+ * Base class for events decoded by {@link CollectdEventsDecoder}.
+ *
  * @author Thomas Segismont
+ * @see ValueListEvent
  */
 public abstract class Event {
     private final String host;

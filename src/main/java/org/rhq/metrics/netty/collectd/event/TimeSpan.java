@@ -16,14 +16,24 @@
 
 package org.rhq.metrics.netty.collectd.event;
 
+import static org.rhq.metrics.netty.collectd.util.Assert.assertNotNull;
+
 /**
+ * Represents a time duration.
+ *
  * @author Thomas Segismont
  */
 public final class TimeSpan {
     private final long value;
     private final TimeResolution resolution;
 
+    /**
+     * @param value time duration
+     * @param resolution time resolution, cannot be null
+     * @see TimeResolution
+     */
     public TimeSpan(long value, TimeResolution resolution) {
+        assertNotNull(resolution, "resolution is null");
         this.value = value;
         this.resolution = resolution;
     }

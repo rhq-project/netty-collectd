@@ -25,25 +25,31 @@ import java.util.Map;
  * @author Thomas Segismont
  */
 public enum PartType {
-    /** The name of the host to associate with subsequent data values. */
+    /** Hostname of the machine where the values were collected. */
     HOST(PartTypeId.HOST),
-    /** The timestamp to associate with subsequent data values, unix time format (seconds since epoch). **/
+    /** When the values were collected, in second resolution since epoch. **/
     TIME(PartTypeId.TIME),
-    /** The timestamp to associate with subsequent data values. Time is defined in 2<sup>-30</sup> seconds since epoch. **/
+    /**
+     * When the values were collected, in high resolution since epoch.
+     * @see org.rhq.metrics.netty.collectd.event.TimeResolution#HIGH_RES
+     **/
     TIME_HIGH_RESOLUTION(PartTypeId.TIME_HIGH_RESOLUTION),
-    /** The plugin name to associate with subsequent data values, e.g. "cpu". **/
+    /** The collectd plugin corresponding to the values collected, e.g. "cpu". **/
     PLUGIN(PartTypeId.PLUGIN),
-    /** The plugin instance name to associate with subsequent data values, e.g. "1". **/
+    /** The collectd plugin instance corresponding to the values collected, e.g. "1". **/
     PLUGIN_INSTANCE(PartTypeId.PLUGIN_INSTANCE),
-    /** The type name to associate with subsequent data values, e.g. "cpu". **/
+    /** The collectd type corresponding to the values collected, e.g. "cpu". **/
     TYPE(PartTypeId.TYPE),
-    /** The type instance name to associate with subsequent data values, e.g. "idle". **/
+    /** The collectd type instance corresponding to the values collected, e.g. "idle". **/
     INSTANCE(PartTypeId.INSTANCE),
-    /** Data values. **/
+    /** Samples with data value type. **/
     VALUES(PartTypeId.VALUES),
-    /** The interval in which subsequent data values are collected, unix time format (seconds since epoch). **/
+    /** How often values are collected, in second resolution since epoch. **/
     INTERVAL(PartTypeId.INTERVAL),
-    /** The interval in which subsequent data values are collected. The interval is given in 2<sup>-30</sup> seconds. **/
+    /**
+     * How often values are collected, in high resolution since epoch.
+     * @see org.rhq.metrics.netty.collectd.event.TimeResolution#HIGH_RES
+     **/
     INTERVAL_HIGH_RESOLUTION(PartTypeId.INTERVAL_HIGH_RESOLUTION);
 
     private short id;
