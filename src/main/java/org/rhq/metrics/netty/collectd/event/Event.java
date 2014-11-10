@@ -16,6 +16,8 @@
 
 package org.rhq.metrics.netty.collectd.event;
 
+import static org.rhq.metrics.netty.collectd.util.Assert.assertNotNull;
+
 /**
  * Base class for events decoded by {@link CollectdEventsDecoder}.
  *
@@ -32,6 +34,12 @@ public abstract class Event {
 
     protected Event(String host, TimeSpan timestamp, String pluginName, String pluginInstance, String typeName,
         String typeInstance) {
+        assertNotNull(host, "host is null");
+        assertNotNull(timestamp, "timestamp is null");
+        assertNotNull(pluginName, "pluginName is null");
+        assertNotNull(pluginInstance, "pluginInstance is null");
+        assertNotNull(typeName, "typeName is null");
+        assertNotNull(typeInstance, "typeInstance is null");
         this.host = host;
         this.timestamp = timestamp;
         this.pluginName = pluginName;
@@ -40,26 +48,44 @@ public abstract class Event {
         this.typeInstance = typeInstance;
     }
 
+    /**
+     * @return hostname of the machine where the values were collected, not null
+     */
     public final String getHost() {
         return host;
     }
 
+    /**
+     * @return when they were collected, not null
+     */
     public final TimeSpan getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * @return the corresponding collectd plugin, e.g. "cpu", not null
+     */
     public final String getPluginName() {
         return pluginName;
     }
 
+    /**
+     * @return the corresponding collectd plugin instance, e.g. "1", not null
+     */
     public final String getPluginInstance() {
         return pluginInstance;
     }
 
+    /**
+     * @return the corresponding collectd type, e.g. "cpu", not null
+     */
     public final String getTypeName() {
         return typeName;
     }
 
+    /**
+     * @return the corresponding collectd type instance, e.g. "idle", not null
+     */
     public final String getTypeInstance() {
         return typeInstance;
     }

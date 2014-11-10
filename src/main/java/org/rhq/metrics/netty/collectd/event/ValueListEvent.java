@@ -51,10 +51,16 @@ public final class ValueListEvent extends Event {
         this.interval = interval;
     }
 
+    /**
+     * @return the metrics, not null
+     */
     public Number[] getValues() {
         return values;
     }
 
+    /**
+     * @return how often these metrics are collected, not null
+     */
     public TimeSpan getInterval() {
         return interval;
     }

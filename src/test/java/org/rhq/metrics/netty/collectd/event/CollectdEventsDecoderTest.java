@@ -18,6 +18,7 @@ package org.rhq.metrics.netty.collectd.event;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -135,5 +136,32 @@ public class CollectdEventsDecoderTest {
         assertEquals(13.13d, values[0]);
         assertEquals(BigInteger.class, values[1].getClass());
         assertEquals(BigInteger.valueOf(13), values[1]);
+    }
+
+    @Test
+    public void handlerShouldNotUseNullWhenNoTypeInstancePartHasBeenSent() throws Exception {
+        List<Part> parts = new ArrayList<Part>();
+        parts.add(new StringPart(HOST, HOST.name()));
+        parts.add(new StringPart(PLUGIN, PLUGIN.name()));
+        parts.add(new StringPart(PLUGIN_INSTANCE, PLUGIN_INSTANCE.name()));
+        parts.add(new StringPart(TYPE, TYPE.name()));
+        parts.add(new NumericPart(TIME_HIGH_RESOLUTION, (long) TIME_HIGH_RESOLUTION.ordinal()));
+        parts.add(new NumericPart(INTERVAL_HIGH_RESOLUTION, (long) INTERVAL_HIGH_RESOLUTION.ordinal()));
+        DataType[] dataTypes = new DataType[] { GAUGE, ABSOLUTE };
+        Number[] data = new Number[] { 13.13d, BigInteger.valueOf(13) };
+        Values values = new Values(dataTypes, data);
+        ValuePart valuePart = new ValuePart(VALUES, values);
+        parts.add(valuePart);
+        CollectdPacket packet = new CollectdPacket(parts.toArray(new Part[parts.size()]));
+
+        EmbeddedChannel channel = new EmbeddedChannel(new CollectdEventsDecoder());
+        assertTrue("Expected an event", channel.writeInbound(packet));
+
+        Object output = channel.readInbound();
+        assertEquals(ValueListEvent.class, output.getClass());
+        ValueListEvent event = (ValueListEvent) output;
+        assertNotNull(event.getTypeInstance());
+
+        assertNull("Expected exactly one instance of Event", channel.readInbound());
     }
 }

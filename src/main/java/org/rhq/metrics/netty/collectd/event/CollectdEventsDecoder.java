@@ -43,10 +43,13 @@ import org.rhq.metrics.netty.collectd.packet.ValuePart;
 public final class CollectdEventsDecoder extends MessageToMessageDecoder<CollectdPacket> {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(CollectdEventsDecoder.class);
 
+    private static final String EMPTY_STRING_VALUE = "";
+
     @Override
     protected void decode(ChannelHandlerContext context, CollectdPacket packet, List<Object> out) throws Exception {
         long start = System.currentTimeMillis();
-        String host = null, pluginName = null, pluginInstance = null, typeName = null, typeInstance = null;
+        String host = EMPTY_STRING_VALUE, pluginName = EMPTY_STRING_VALUE, pluginInstance = EMPTY_STRING_VALUE;
+        String typeName = EMPTY_STRING_VALUE, typeInstance = EMPTY_STRING_VALUE;
         TimeSpan timestamp = null, interval = null;
         List<Event> events = new ArrayList<Event>(50);
         for (Part part : packet.getParts()) {
