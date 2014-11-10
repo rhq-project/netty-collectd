@@ -64,7 +64,7 @@ First add the dependency. For Maven:
 <dependency>
   <groupId>org.rhq.metrics.netty</groupId>
   <artifactId>netty-collectd</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
 </dependency>
 ----
 
