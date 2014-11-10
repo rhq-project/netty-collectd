@@ -83,7 +83,7 @@ public class PacketDecodingTest {
         shouldDecodePart(value, partType, createStringPartBuffer(value, partType), StringPart.class);
     }
 
-    private ByteBuf createStringPartBuffer(String value, PartType partType) {
+    static ByteBuf createStringPartBuffer(String value, PartType partType) {
         ByteBuf buffer = Unpooled.buffer();
         buffer.writeShort(partType.getId());
         ByteBuf src = Unpooled.copiedBuffer(value, CharsetUtil.US_ASCII);
@@ -117,7 +117,7 @@ public class PacketDecodingTest {
         shouldDecodePart(value, partType, createNumericPartBuffer(value, partType), NumericPart.class);
     }
 
-    private ByteBuf createNumericPartBuffer(Long value, PartType partType) {
+    static ByteBuf createNumericPartBuffer(Long value, PartType partType) {
         ByteBuf buffer = Unpooled.buffer();
         buffer.writeShort(partType.getId());
         buffer.writeShort(12);
@@ -127,6 +127,11 @@ public class PacketDecodingTest {
 
     @Test
     public void shouldDecodeValuesPart() {
+        Values values = newValuesInstance();
+        shouldDecodePart(VALUES, createValuesPartBuffer(values), ValuePart.class, new ValuesMatcher(values));
+    }
+
+    static Values newValuesInstance() {
         DataType[] dataTypes = DataType.values();
         Number[] data = new Number[dataTypes.length];
         for (int i = 0; i < data.length; i++) {
@@ -143,15 +148,17 @@ public class PacketDecodingTest {
                 break;
             case GAUGE:
                 data[i] = 15784.02564d;
-                //                    data[i] = Double.longBitsToDouble(ByteBufUtil.swapLong(content.readLong()));
                 break;
             default:
                 fail("Unknown data type: " + dataType);
             }
         }
+        return new Values(dataTypes, data);
+    }
 
-        final Values values = new Values(dataTypes, data);
-
+    static ByteBuf createValuesPartBuffer(Values values) {
+        Number[] data = values.getData();
+        DataType[] dataTypes = values.getDataTypes();
         ByteBuf payloadBuffer = Unpooled.buffer();
         for (int i = 0; i < data.length; i++) {
             payloadBuffer.writeByte(dataTypes[i].getId());
@@ -182,16 +189,16 @@ public class PacketDecodingTest {
 
         ByteBuf buffer = Unpooled.buffer();
         buffer.writeBytes(headerBuffer.duplicate()).writeBytes(payloadBuffer.duplicate());
-
-        shouldDecodePart(values, VALUES, buffer, ValuePart.class, new ValuesMatcher(values));
+        return buffer;
     }
 
     private void shouldDecodePart(Object value, PartType partType, ByteBuf buffer, Class<? extends Part> partClass) {
-        shouldDecodePart(value, partType, buffer, partClass, new IsEqual<Object>(value));
+        shouldDecodePart(partType, buffer, partClass, new IsEqual<Object>(value));
     }
 
-    private void shouldDecodePart(Object value, PartType partType, ByteBuf buffer, Class<? extends Part> partClass,
+    private void shouldDecodePart(PartType partType, ByteBuf buffer, Class<? extends Part> partClass,
         Matcher<Object> matcher) {
+
         DatagramPacket datagramPacket = new DatagramPacket(buffer.duplicate(), DUMMY_ADDRESS);
 
         EmbeddedChannel channel = new EmbeddedChannel(new CollectdPacketDecoder());
