@@ -189,6 +189,7 @@
     </plugins>
   </build>
 
+  <url>https://github.com/rhq-project/netty-collectd</url>
   <inceptionYear>2014</inceptionYear>
 
   <developers>
