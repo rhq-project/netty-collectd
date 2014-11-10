@@ -14,13 +14,12 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.rhq.metrics.netty</groupId>
   <artifactId>netty-collectd</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
 
   <name>netty-collectd</name>
@@ -30,7 +29,7 @@
     <connection>scm:git:git://github.com/rhq-project/netty-collectd.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/rhq-project/netty-collectd.git</developerConnection>
     <url>https://github.com/rhq-project/netty-collectd</url>
-    <tag>HEAD</tag>
+    <tag>v0.1</tag>
   </scm>
 
   <properties>
@@ -82,7 +81,7 @@
             <requireJavaVersion>
               <version>[1.6,)</version>
             </requireJavaVersion>
-            <requireNoRepositories/>
+            <requireNoRepositories />
           </rules>
         </configuration>
       </plugin>
